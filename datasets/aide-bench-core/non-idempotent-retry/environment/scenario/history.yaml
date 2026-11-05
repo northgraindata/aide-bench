@@ -1,0 +1,15 @@
+- sha: e8a0b13
+  author: marco
+  date: 2026-10-15
+  message: "load_orders: simplify load, the delete is not needed"
+  files: [jobs/load_orders.py]
+  diff: |
+    --- a/jobs/load_orders.py
+    +++ b/jobs/load_orders.py
+    @@ -1,5 +1,4 @@
+     def load(con, day, rows):
+         con.execute("create table if not exists orders_fact(order_id integer, order_date date, amount double)")
+    -    con.execute("delete from orders_fact where order_date = ?", [day])
+         con.executemany("insert into orders_fact values (?, ?, ?)", rows)
+         write_audit(day, len(rows))
+- {sha: 22c4f9d, author: priya, date: 2026-09-03, message: "audit record after each load", files: [jobs/load_orders.py], diff: ""}

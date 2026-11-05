@@ -1,0 +1,10 @@
+diff --git a/jobs/load_orders.py b/jobs/load_orders.py
+--- a/jobs/load_orders.py
++++ b/jobs/load_orders.py
+@@ -1,5 +1,6 @@
+ def load(con, day, rows):
+     con.execute("create table if not exists orders_fact(order_id integer, order_date date, amount double)")
++    con.execute("delete from orders_fact where order_date = ?", [day])
+     con.executemany("insert into orders_fact values (?, ?, ?)", rows)
+     write_audit(day, len(rows))
+ 

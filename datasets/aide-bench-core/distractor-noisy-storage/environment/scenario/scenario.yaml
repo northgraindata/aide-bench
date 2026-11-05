@@ -1,0 +1,53 @@
+systems:
+  - kind: orchestrator
+    flavor: airflow
+    dags:
+      - dag_id: load_events
+        schedule: "0 1 * * *"
+        runs:
+          - run_id: scheduled__2026-10-30
+            state: failed
+            logical_date: "2026-10-30"
+            tasks:
+              - task_id: load_events
+                state: failed
+                log: "INFO reading s3://lake/raw/events\nTraceback (most recent call last):\n  File \"/opt/jobs/load_events.py\", line 9, in load\n    df['hour'] = df['ts'].str.slice(11, 13)\n  File \"pandas/core/accessor.py\", line 224, in __get__\nAttributeError: Can only use .str accessor with string values!\nTask failed with exception"
+          - run_id: scheduled__2026-10-28
+            state: success
+            logical_date: "2026-10-28"
+            tasks:
+              - {task_id: load_events, state: success, log: "INFO loaded 5000 rows"}
+      - dag_id: nightly_backup
+        schedule: "0 5 * * *"
+        runs:
+          - run_id: scheduled__2026-10-30
+            state: failed
+            logical_date: "2026-10-30"
+            tasks:
+              - {task_id: upload_backup, state: failed, log: "ERROR botocore.exceptions.ClientError: An error occurred (AccessDenied) when calling the PutObject operation: Access Denied\nTask failed"}
+          - run_id: scheduled__2026-10-09
+            state: failed
+            logical_date: "2026-10-09"
+            tasks:
+              - {task_id: upload_backup, state: failed, log: "ERROR botocore.exceptions.ClientError: An error occurred (AccessDenied) when calling the PutObject operation: Access Denied\nTask failed"}
+  - kind: lakehouse
+    flavor: iceberg
+    tables:
+      - name: raw.events
+        location: s3://lake/raw/events
+        current_schema_id: 1
+        current_snapshot_id: 551
+        schemas:
+          - {schema_id: 0, fields: [{id: 1, name: event_id, type: long}, {id: 2, name: ts, type: string}]}
+          - {schema_id: 1, fields: [{id: 1, name: event_id, type: long}, {id: 2, name: ts, type: timestamp}]}
+        snapshots:
+          - {snapshot_id: 551, committed_at: "2026-10-30T00:40:00Z", operation: overwrite, schema_id: 1, summary: {note: "ts migrated from string to timestamp"}}
+          - {snapshot_id: 540, committed_at: "2026-10-29T00:40:00Z", operation: overwrite, schema_id: 0, summary: {}}
+  - kind: object_storage
+    flavor: s3-minio
+    buckets:
+      audit-logs: audit-logs
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml

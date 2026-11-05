@@ -1,0 +1,29 @@
+- sha: 9f2c1aa
+  author: priya
+  date: 2026-10-27
+  message: "daily_revenue: add order count column"
+  files: [models/marts/daily_revenue.sql]
+  diff: |
+    --- a/models/marts/daily_revenue.sql
+    +++ b/models/marts/daily_revenue.sql
+    @@ -1,2 +1,2 @@
+    -select order_date, sum(amount) as revenue
+    +select order_date, count(*) as orders, sum(amount) as revenue
+- sha: 41be07d
+  author: marco
+  date: 2026-09-12
+  message: "stg_orders: exclude rows without currency (clean up test payments)"
+  files: [models/staging/stg_orders.sql]
+  diff: |
+    --- a/models/staging/stg_orders.sql
+    +++ b/models/staging/stg_orders.sql
+    @@ -1,2 +1,3 @@
+     select order_id, order_date, currency, amount
+     from raw_orders
+    +where currency is not null
+- sha: 0a77d3e
+  author: marco
+  date: 2026-08-02
+  message: "initial retail-analytics project"
+  files: [models/staging/stg_orders.sql, models/marts/daily_revenue.sql]
+  diff: ""

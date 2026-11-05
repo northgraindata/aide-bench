@@ -1,0 +1,40 @@
+systems:
+  - kind: warehouse
+    flavor: duckdb
+    sql:
+      - |
+        create table events_raw as
+        select i as event_id,
+               case when i % 3 = 0 then strftime(date '2026-10-30', '%d/%m/%Y') else strftime(date '2026-10-30', '%Y-%m-%d') end as event_date,
+               'click' as kind
+        from range(1, 1201) t(i)
+      - |
+        create table events_clean as
+        select event_id, cast(event_date as date) as event_date, kind
+        from events_raw where event_date like '____-__-__'
+      - "create table events_by_day as select event_date, count(*) as events from events_clean group by 1"
+  - kind: orchestrator
+    flavor: airflow
+    dags:
+      - dag_id: clean_events
+        schedule: "0 3 * * *"
+        runs:
+          - run_id: scheduled__2026-10-30
+            state: success
+            logical_date: "2026-10-30"
+            tasks:
+              - task_id: clean_events
+                state: success
+                log: "INFO read 1200 rows from events_raw\n/opt/jobs/clean_events.py:11: UserWarning: Parsing dates in %d/%m/%Y format when dayfirst=False (the default) was specified. Pass `dayfirst=True` or specify a format to silence this warning.\nINFO dropped 400 rows with unparseable event_date\nINFO wrote 800 rows to events_clean"
+          - run_id: scheduled__2026-10-28
+            state: success
+            logical_date: "2026-10-28"
+            tasks:
+              - {task_id: clean_events, state: success, log: "INFO read 1200 rows from events_raw\nINFO dropped 0 rows with unparseable event_date\nINFO wrote 1200 rows to events_clean"}
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml
+  - kind: docs
+    flavor: markdown
+    dir: docs

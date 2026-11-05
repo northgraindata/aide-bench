@@ -1,0 +1,2 @@
+- {sha: a14f7c0, author: priya, date: 2026-10-22, message: "dim_customer: keep history rows (type 2) with is_current flag", files: [models/marts/fct_orders_enriched.sql], diff: ""}
+- {sha: e8a0b13, author: marco, date: 2026-10-15, message: "load_orders: drop the delete, inserts are enough", files: [jobs/load_orders.py], diff: ""}

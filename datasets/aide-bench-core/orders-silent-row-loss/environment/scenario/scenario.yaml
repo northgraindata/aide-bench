@@ -1,0 +1,49 @@
+systems:
+  - kind: warehouse
+    flavor: duckdb
+    sql:
+      - |
+        create table raw_orders as
+        select d * 100 + i as order_id,
+               date '2026-10-23' + cast(d as integer) as order_date,
+               case when d = 7 and i % 8 = 0 then null else 'USD' end as currency,
+               100.0 as amount
+        from range(0, 8) a(d), range(1, 101) b(i)
+      - "create table stg_orders as select order_id, order_date, currency, amount from raw_orders where currency is not null"
+      - "create table daily_revenue as select order_date, count(*) as orders, sum(amount) as revenue from stg_orders group by 1 order by 1"
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml
+  - kind: transform
+    flavor: dbt
+    models:
+      - {name: stg_orders, path: models/staging/stg_orders.sql, status: success, message: "OK created table", rows_affected: 788, execution_time: 0.4, depends_on: [raw_orders], sql_file: repo/models/staging/stg_orders.sql}
+      - {name: daily_revenue, path: models/marts/daily_revenue.sql, status: success, message: "OK created table", rows_affected: 8, execution_time: 0.2, depends_on: [stg_orders], sql_file: repo/models/marts/daily_revenue.sql}
+    tests:
+      - {name: not_null_stg_orders_order_id, model: stg_orders, status: pass, failures: 0}
+      - {name: unique_stg_orders_order_id, model: stg_orders, status: pass, failures: 0}
+  - kind: orchestrator
+    flavor: airflow
+    dags:
+      - dag_id: ingest_orders
+        schedule: "0 2 * * *"
+        runs:
+          - run_id: scheduled__2026-10-30
+            state: success
+            logical_date: "2026-10-30"
+            tasks:
+              - {task_id: extract_orders, state: success, log: "INFO extracted 100 rows from payments API for 2026-10-30\nINFO wrote raw_orders partition 2026-10-30"}
+              - {task_id: load_raw, state: success, log: "INFO loaded 100 rows into raw_orders\nINFO task finished"}
+      - dag_id: dbt_build
+        schedule: "0 4 * * *"
+        runs:
+          - run_id: scheduled__2026-10-30
+            state: success
+            logical_date: "2026-10-30"
+            tasks:
+              - {task_id: dbt_run, state: success, log: "Completed successfully\nDone. PASS=2 WARN=0 ERROR=0 SKIP=0 TOTAL=2"}
+              - {task_id: dbt_test, state: success, log: "Completed successfully\nDone. PASS=2 WARN=0 ERROR=0 SKIP=0 TOTAL=2"}
+  - kind: docs
+    flavor: markdown
+    dir: docs

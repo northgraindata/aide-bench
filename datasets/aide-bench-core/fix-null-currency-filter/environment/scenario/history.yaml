@@ -1,0 +1,1 @@
+- {sha: 41be07d, author: marco, date: 2026-09-12, message: "stg_orders: exclude rows without currency (clean up test payments)", files: [models/staging/stg_orders.sql], diff: ""}

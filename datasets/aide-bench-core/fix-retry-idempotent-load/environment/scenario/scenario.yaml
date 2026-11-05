@@ -1,0 +1,28 @@
+systems:
+  - kind: warehouse
+    flavor: duckdb
+    sql:
+      - |
+        create table orders_fact as
+        select d * 1000 + i as order_id, date '2026-10-28' + cast(d as integer) as order_date, cast(100.0 as double) as amount
+        from range(0, 3) a(d), range(1, 101) b(i)
+      - "insert into orders_fact select 2000 + i, date '2026-10-30', 100.0 from range(1, 101) t(i)"
+  - kind: orchestrator
+    flavor: airflow
+    dags:
+      - dag_id: load_orders
+        schedule: "0 2 * * *"
+        runs:
+          - run_id: scheduled__2026-10-30
+            state: success
+            logical_date: "2026-10-30"
+            tasks:
+              - task_id: load_orders_fact
+                tries:
+                  - {try_number: 1, state: failed, log: "INFO inserted 100 rows into orders_fact for 2026-10-30\nERROR audit service timed out after 30s\nTask failed with exception AuditTimeout"}
+                  - {try_number: 2, state: success, log: "INFO inserted 100 rows into orders_fact for 2026-10-30\nINFO audit ok"}
+  - kind: repo
+    flavor: git
+    writable: true
+    files: repo
+    history: history.yaml

@@ -1,0 +1,2 @@
+- {sha: 5be21c7, author: marco, date: 2026-10-27, message: "logging: send parser diagnostics to the partner-logs bucket", files: [jobs/logging_setup.py], diff: ""}
+- {sha: 1d9e4aa, author: priya, date: 2026-08-14, message: "add partner orders parser", files: [jobs/parse_partner.py], diff: ""}

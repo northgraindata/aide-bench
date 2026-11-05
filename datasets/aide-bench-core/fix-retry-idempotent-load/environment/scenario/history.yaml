@@ -1,0 +1,1 @@
+- {sha: e8a0b13, author: marco, date: 2026-10-15, message: "load_orders: simplify load, the delete is not needed", files: [jobs/load_orders.py], diff: ""}

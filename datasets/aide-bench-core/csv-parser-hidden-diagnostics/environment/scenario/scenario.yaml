@@ -1,0 +1,42 @@
+systems:
+  - kind: orchestrator
+    flavor: airflow
+    dags:
+      - dag_id: partner_orders_import
+        schedule: "30 3 * * *"
+        runs:
+          - run_id: scheduled__2026-10-30
+            state: failed
+            logical_date: "2026-10-30"
+            tasks:
+              - {task_id: fetch_drop, state: success, log: "INFO downloaded s3://partner-drop/orders_20261030.csv (2 KB)"}
+              - task_id: parse_csv
+                state: failed
+                log: "INFO parsing orders_20261030.csv\nERROR Task failed with exit code 1\nINFO details are written to the partner-logs bucket"
+              - {task_id: load_orders, state: upstream_failed, log: ""}
+          - run_id: scheduled__2026-10-29
+            state: success
+            logical_date: "2026-10-29"
+            tasks:
+              - {task_id: fetch_drop, state: success, log: "INFO downloaded s3://partner-drop/orders_20261029.csv (2 KB)"}
+              - {task_id: parse_csv, state: success, log: "INFO parsed 24 rows"}
+              - {task_id: load_orders, state: success, log: "INFO loaded 24 rows into partner_orders"}
+  - kind: object_storage
+    flavor: s3-minio
+    buckets:
+      partner-drop: partner-drop
+      partner-logs: partner-logs
+  - kind: warehouse
+    flavor: duckdb
+    sql:
+      - |
+        create table partner_orders as
+        select i as order_id, date '2026-10-29' as order_date, 'Partner ' || i as customer, 100.0 as amount
+        from range(1, 25) t(i)
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml
+  - kind: docs
+    flavor: markdown
+    dir: docs

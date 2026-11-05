@@ -1,0 +1,36 @@
+systems:
+  - kind: warehouse
+    flavor: duckdb
+    sql:
+      - |
+        create table daily_revenue as
+        select d as order_date,
+               case dayofweek(d) when 6 then 6000.0 when 0 then 4300.0 else 10000.0 end as revenue
+        from range(date '2026-10-12', date '2026-11-02', interval 1 day) t(d)
+  - kind: orchestrator
+    flavor: airflow
+    dags:
+      - dag_id: ingest_orders
+        schedule: "0 2 * * *"
+        runs:
+          - run_id: scheduled__2026-11-01
+            state: success
+            logical_date: "2026-11-01"
+            tasks:
+              - {task_id: extract_orders, state: success, log: "INFO extracted 43 rows from payments API for 2026-11-01"}
+              - {task_id: load_raw, state: success, log: "INFO loaded 43 rows"}
+          - run_id: scheduled__2026-10-31
+            state: success
+            logical_date: "2026-10-31"
+            tasks:
+              - {task_id: extract_orders, state: success, log: "INFO extracted 60 rows from payments API for 2026-10-31"}
+              - {task_id: load_raw, state: success, log: "INFO loaded 60 rows"}
+  - kind: transform
+    flavor: dbt
+    models:
+      - {name: daily_revenue, path: models/marts/daily_revenue.sql, status: success, message: "OK created table", rows_affected: 21, execution_time: 0.2, depends_on: [raw_orders], sql: "select order_date, sum(amount) as revenue from raw_orders group by 1"}
+    tests:
+      - {name: not_null_daily_revenue_revenue, model: daily_revenue, status: pass, failures: 0}
+  - kind: docs
+    flavor: markdown
+    dir: docs

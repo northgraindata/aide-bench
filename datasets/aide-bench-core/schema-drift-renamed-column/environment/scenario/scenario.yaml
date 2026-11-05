@@ -1,0 +1,83 @@
+systems:
+  - kind: warehouse
+    flavor: duckdb
+    sql:
+      - |
+        create table raw_customers as
+        select i as customer_id, 'user' || i || '@example.com' as email,
+               date '2026-01-01' + cast(i % 200 as integer) as signup_date
+        from range(1, 521) t(i)
+      - |
+        create table stg_customers as
+        select i as cust_id, 'user' || i || '@example.com' as email,
+               date '2026-01-01' + cast(i % 200 as integer) as signup_date,
+               timestamp '2026-10-28 04:10:00' as loaded_at
+        from range(1, 501) t(i)
+      - "create table customer_ltv as select cust_id, 120.0 as ltv, timestamp '2026-10-28 04:12:00' as refreshed_at from stg_customers"
+  - kind: lakehouse
+    flavor: iceberg
+    tables:
+      - name: raw.customers
+        location: s3://lake/raw/customers
+        current_schema_id: 1
+        current_snapshot_id: 8812004
+        schemas:
+          - schema_id: 0
+            fields: [{id: 1, name: cust_id, type: long, required: true}, {id: 2, name: email, type: string}, {id: 3, name: signup_date, type: date}]
+          - schema_id: 1
+            fields: [{id: 1, name: customer_id, type: long, required: true}, {id: 2, name: email, type: string}, {id: 3, name: signup_date, type: date}]
+        snapshots:
+          - {snapshot_id: 8812004, committed_at: "2026-10-29T02:03:11Z", operation: overwrite, schema_id: 1, summary: {added-records: "520", note: "crm-export v2.0 contract"}}
+          - {snapshot_id: 8790331, committed_at: "2026-10-28T02:03:09Z", operation: overwrite, schema_id: 0, summary: {added-records: "500"}}
+  - kind: transform
+    flavor: dbt
+    models:
+      - name: stg_customers
+        path: models/staging/stg_customers.sql
+        status: error
+        message: 'Binder Error: Referenced column "cust_id" not found in FROM clause! Candidate bindings: "customer_id"'
+        execution_time: 0.1
+        depends_on: [raw_customers]
+        sql_file: repo/models/staging/stg_customers.sql
+      - {name: customer_ltv, path: models/marts/customer_ltv.sql, status: skipped, message: "SKIP because upstream stg_customers errored", execution_time: 0, depends_on: [stg_customers], sql_file: repo/models/marts/customer_ltv.sql}
+    tests: []
+  - kind: orchestrator
+    flavor: airflow
+    dags:
+      - dag_id: ingest_customers
+        schedule: "0 2 * * *"
+        runs:
+          - run_id: scheduled__2026-10-30
+            state: success
+            logical_date: "2026-10-30"
+            tasks:
+              - {task_id: export_from_crm, state: success, log: "INFO crm-export wrote 520 rows to s3://lake/raw/customers\nINFO iceberg commit ok"}
+      - dag_id: dbt_build
+        schedule: "0 4 * * *"
+        runs:
+          - run_id: scheduled__2026-10-30
+            state: failed
+            logical_date: "2026-10-30"
+            tasks:
+              - task_id: dbt_run
+                state: failed
+                log: "Running with dbt=1.8.0\n1 of 2 ERROR creating table model stg_customers ........ [ERROR in 0.10s]\n2 of 2 SKIP relation customer_ltv .......................... [SKIP]\nDone. PASS=0 WARN=0 ERROR=1 SKIP=1 TOTAL=2\nTask failed with exit code 1"
+          - run_id: scheduled__2026-10-29
+            state: failed
+            logical_date: "2026-10-29"
+            tasks:
+              - task_id: dbt_run
+                state: failed
+                log: "1 of 2 ERROR creating table model stg_customers\nDone. PASS=0 WARN=0 ERROR=1 SKIP=1 TOTAL=2\nTask failed with exit code 1"
+          - run_id: scheduled__2026-10-28
+            state: success
+            logical_date: "2026-10-28"
+            tasks:
+              - {task_id: dbt_run, state: success, log: "Done. PASS=2 WARN=0 ERROR=0 SKIP=0 TOTAL=2"}
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml
+  - kind: docs
+    flavor: markdown
+    dir: docs

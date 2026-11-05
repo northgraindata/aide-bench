@@ -1,0 +1,1 @@
+- {sha: 3fa9d10, author: priya, date: 2026-07-02, message: "load_events: derive hour from ts", files: [jobs/load_events.py], diff: ""}

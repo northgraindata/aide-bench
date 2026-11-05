@@ -1,0 +1,2 @@
+- {sha: c3d19b2, author: priya, date: 2026-10-20, message: "customer_ltv: refresh timestamp", files: [models/marts/customer_ltv.sql], diff: ""}
+- {sha: 70e5a41, author: marco, date: 2026-09-01, message: "add customer_ltv mart", files: [models/marts/customer_ltv.sql], diff: ""}

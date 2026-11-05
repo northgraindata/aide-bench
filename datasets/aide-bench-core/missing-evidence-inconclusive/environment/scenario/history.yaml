@@ -1,0 +1,1 @@
+- {sha: 2c7d8e1, author: marco, date: 2026-09-20, message: "upload_export: write uploader diagnostics to ops-logs", files: [jobs/upload_export.py], diff: ""}

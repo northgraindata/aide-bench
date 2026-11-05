@@ -1,0 +1,17 @@
+systems:
+  - kind: warehouse
+    flavor: duckdb
+    sql:
+      - |
+        create table raw_orders as
+        select i as order_id, date '2026-10-30' as order_date,
+               case when i % 8 = 0 then null else 'USD' end as currency,
+               cast(100.0 as double) as amount
+        from range(1, 101) t(i)
+      - "create table stg_orders as select order_id, order_date, currency, amount from raw_orders where currency is not null"
+      - "create table daily_revenue as select order_date, count(*) as orders, sum(amount) as revenue from stg_orders group by 1"
+  - kind: repo
+    flavor: git
+    writable: true
+    files: repo
+    history: history.yaml

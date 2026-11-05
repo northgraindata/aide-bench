@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/opt/jobs/parse_partner.py", line 14, in <module>
+    frame = pd.read_csv(path)
+  File "/usr/local/lib/python3.11/site-packages/pandas/io/parsers/readers.py", line 948, in read_csv
+    return _read(filepath_or_buffer, kwds)
+pandas.errors.ParserError: Error tokenizing data. C error: EOF inside string starting at row 16

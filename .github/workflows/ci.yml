@@ -1,0 +1,36 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  offline:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv lock --check
+      - name: requirements.lock matches uv.lock
+        run: |
+          uv export --no-hashes --no-emit-project --no-dev --frozen -o requirements.lock
+          git diff --exit-code requirements.lock
+      - run: uv sync --extra dev
+      - run: uv run pytest -q
+      - run: uv run aide lint
+      - run: uv run aide check
+      - name: README statistics are current
+        run: |
+          uv run aide stats --write
+          git diff --exit-code README.md
+
+  containers:
+    runs-on: ubuntu-24.04
+    needs: offline
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev
+      - run: uv tool install harbor==0.25.0
+      - name: Oracle must pass and nop must fail for every task
+        run: uv run aide validate
