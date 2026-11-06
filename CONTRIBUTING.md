@@ -2,6 +2,21 @@
 
 Tasks, flavors and graders are welcome.
 
+## Developer setup
+
+From a local checkout with `uv` installed:
+
+```bash
+uv sync --extra dev
+uv run pytest         # unit tests, graders, every task through oracle and nop
+uv run aide check     # lint + offline oracle/nop; no containers
+```
+
+For container validation, follow the [evaluation setup](docs/RUNNING.md#evaluation-setup) to install Harbor and build the task image.
+This developer setup is separate from [running an evaluation](docs/RUNNING.md).
+
+## Submitting changes
+
 1. Read `docs/ADDING_TASKS.md` or `docs/ADDING_FLAVORS.md`.
 2. Run `uv run aide check` and `uv run pytest`.
 3. Run `uv run aide validate` for any task you add or change.

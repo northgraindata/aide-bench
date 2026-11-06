@@ -1,10 +1,17 @@
 # Running agents
 
-## Prerequisites
+## Evaluation setup
 
-- `uv`, and either Apple's `container` CLI (macOS) or Docker.
-- `uv tool install harbor==0.25.0`.
-- `uv run aide build-image` once, and again whenever `src/` changes.
+From a local checkout, you need `uv` and either Apple's `container` CLI (macOS) or Docker.
+
+```bash
+uv sync
+uv tool install harbor==0.25.0
+uv run aide build-image
+```
+
+Build the task image once, and again whenever `src/` changes.
+For work on the benchmark itself, use the separate [contributor setup](../CONTRIBUTING.md#developer-setup).
 
 ## Run
 

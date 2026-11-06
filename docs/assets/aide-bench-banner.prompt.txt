@@ -1,0 +1,11 @@
+Generated with the built-in image_gen tool.
+
+Use case: ads-marketing
+Asset type: wide GitHub README hero banner, landscape 3:1 composition.
+Primary request: Elegant editorial banner for aide-bench, an open benchmark for AI data engineer agents, inspired by Northgrain Data's restrained premium data engineering consultancy website.
+Scene/backdrop: warm off-white #f4f4ef, faint fine architectural grid, generous whitespace. Palette forest green #2e6549, sage #cfd6ce, ink #11191e.
+Subject: right half an art-directed tactile isometric landscape of precise translucent sage glass data blocks and thin forest-green pipeline connections, one broken connection being investigated and resolved. Abstract data infrastructure, quietly technical, sophisticated material rendering with soft daylight and gentle shadows.
+Composition: left half very legible large dark typography, generous inset margins. Small eyebrow above title, short subtitle beneath. Right half illustration, visually balanced with left.
+Text (verbatim): eyebrow "NORTHGRAIN DATA / OPEN SOURCE", main title "aide-bench", subtitle "Can your AI agent find the root cause?"
+Typography: crisp modern editorial sans serif, main title bold, clean, no decorative fonts.
+Constraints: professional polished finished banner, high legibility at GitHub width, no extra text, no charts with invented metrics, no robot, no neon, no purple gradients, no fake company logo. Opaque background.
