@@ -1,3 +1,5 @@
+![AIDE Bench — Benchmarking AI agents on real data engineering problems](docs/assets/aide-bench-banner.png)
+
 # aide-bench
 
 An open benchmark for AI data engineer agents.
