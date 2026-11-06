@@ -165,7 +165,7 @@ def cmd_stats(args: argparse.Namespace) -> int:
         )
     table = "\n".join(lines)
     if args.write:
-        readme = root / "docs" / "DATASET.md"
+        readme = root / "README.md"
         text = readme.read_text()
         block = f"<!-- stats:start -->\n{table}\n<!-- stats:end -->"
         text = re.sub(r"<!-- stats:start -->.*?<!-- stats:end -->", lambda _: block, text, flags=re.S)
@@ -241,7 +241,7 @@ def main() -> None:
         p = sub.add_parser(name, help=help_text)
         p.add_argument("task", nargs="?", help="task id, dataset name or path")
         if name == "stats":
-            p.add_argument("--write", action="store_true", help="update the table in docs/DATASET.md")
+            p.add_argument("--write", action="store_true", help="update the table in README.md")
         p.set_defaults(fn=fn)
 
     validate = sub.add_parser("validate", help="containerized oracle (must pass) and nop (must fail) via Harbor")
