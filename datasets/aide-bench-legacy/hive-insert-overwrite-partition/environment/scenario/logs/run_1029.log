@@ -1,0 +1,7 @@
+Query ID = etl_20261029060001_77a0
+Loading data to table default.sales_daily partition (dt=2026-10-28)
+Loading data to table default.sales_daily partition (dt=2026-10-29)
+Partition default.sales_daily{dt=2026-10-28} stats: [numFiles=1, numRows=10200, totalSize=201900, rawDataSize=191700]
+Partition default.sales_daily{dt=2026-10-29} stats: [numFiles=1, numRows=10400, totalSize=205800, rawDataSize=195400]
+OK
+Time taken: 233.1 seconds

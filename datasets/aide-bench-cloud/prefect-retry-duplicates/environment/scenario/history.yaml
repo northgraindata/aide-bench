@@ -1,0 +1,1 @@
+- {sha: 3a8bd0e, author: omar, date: 2026-10-12, message: "load_orders: retry once on transient errors, write an audit record", files: [flows/load_orders.py], diff: ""}

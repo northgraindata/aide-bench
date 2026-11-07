@@ -1,0 +1,7 @@
+- sha: b77a104
+  author: kasia
+  date: 2026-10-28
+  message: "db: drop unused index stock_levels_sku_idx"
+  files: [migrations/0412_drop_stock_levels_sku_idx.sql]
+  diff: ""
+- {sha: 0cd91e3, author: kasia, date: 2026-02-10, message: "inventory: snapshot every 15 minutes, hourly window", files: [infra/crontab, scripts/inventory_snapshot.sh], diff: ""}

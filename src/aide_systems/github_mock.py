@@ -129,6 +129,8 @@ class GithubMock:
                 self.send_response(status)
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Content-Length", str(len(data)))
+                # Real GitHub reports the scopes of a classic token on every response.
+                self.send_header("X-OAuth-Scopes", "repo")
                 self.end_headers()
                 self.wfile.write(data)
 
@@ -167,7 +169,14 @@ class GithubMock:
             return 404, {"message": "Not Found"}
         rest = path[len(prefix) :]
         if method == "GET" and rest == "":
-            return 200, {"owner": {"login": repo.owner}, "default_branch": repo.default_branch, "name": repo.name}
+            return 200, {
+                "owner": {"login": repo.owner},
+                "default_branch": repo.default_branch,
+                "name": repo.name,
+                "private": False,
+                "archived": False,
+                "permissions": {"admin": False, "push": True, "pull": True},
+            }
         if method == "GET" and (m := re.fullmatch(r"/git/ref/heads/(.+)", rest)):
             sha = repo.refs.get(f"refs/heads/{m.group(1)}")
             return (200, {"object": {"sha": sha, "type": "commit"}}) if sha else (404, {"message": "Not Found"})

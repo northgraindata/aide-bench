@@ -1,0 +1,1 @@
+- {sha: 17c2d9e, author: tomek, date: 2026-06-11, message: "events: daily counts per UTC day", files: [src/main/scala/com/acme/EventsPerDay.scala], diff: ""}

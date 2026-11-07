@@ -1,0 +1,14 @@
+- sha: e90b3c4
+  author: pawel
+  date: 2026-10-29
+  message: "crontab: tidy header, drop unused variables"
+  files: [infra/crontab]
+  diff: |
+    --- a/infra/crontab
+    +++ b/infra/crontab
+    @@ -1,4 +1,2 @@
+    -SHELL=/bin/bash
+    -PATH=/usr/local/bin:/usr/bin:/bin
+     MAILTO=""
+     10 2 * * * /opt/etl/crm_export.sh
+- {sha: 71f2aa8, author: pawel, date: 2025-09-02, message: "export: gzip on the fly", files: [scripts/crm_export.sh], diff: ""}

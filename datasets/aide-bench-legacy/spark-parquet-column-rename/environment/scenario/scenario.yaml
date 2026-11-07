@@ -1,0 +1,41 @@
+systems:
+  - kind: warehouse
+    flavor: duckdb
+    sql:
+      - |
+        create table daily_sales as
+        select d as sale_date, s as store_id,
+               case when s between 41 and 48 and d >= date '2026-10-29' then 0.0 else 1000.0 + s * 10 end as revenue
+        from range(date '2026-10-27', date '2026-10-31', interval 1 day) t(d), range(40, 50) u(s)
+  - kind: orchestrator
+    flavor: cron
+    jobs:
+      - job_id: sales_daily
+        schedule: "30 2 * * *"
+        command: /opt/jobs/run_sales_daily.sh
+        user: etl
+        runs:
+          - {run_id: "2026-10-30", started: "2026-10-30T02:30:00", exit_code: 0, output_file: logs/run_1030.log}
+          - {run_id: "2026-10-28", started: "2026-10-28T02:30:00", exit_code: 0, output: "application_1761800000000_0390 SUCCEEDED: wrote 10 stores for 2026-10-28"}
+  - kind: compute
+    flavor: spark
+    applications:
+      - app_id: application_1761800000000_0420
+        name: sales-daily
+        user: etl
+        state: SUCCEEDED
+        start: "2026-10-30T02:30:05"
+        duration_s: 411
+        spark_version: "2.4.8"
+        conf: {spark.sql.parquet.mergeSchema: "false"}
+        stages:
+          - {stage_id: 0, name: "parquet scan sales", status: COMPLETE, num_tasks: 120, failed_tasks: 0, duration_s: 61}
+          - {stage_id: 1, name: "groupBy store_id", status: COMPLETE, num_tasks: 200, failed_tasks: 0, duration_s: 80}
+        driver_log_file: logs/driver.log
+  - kind: object_storage
+    flavor: s3-minio
+    buckets: {lake: lake}
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml

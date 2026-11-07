@@ -1,0 +1,4 @@
+26/10/30 01:18:20 INFO Executor: Running task 87.0 in stage 5.0 (TID 9031)
+26/10/30 01:24:02 INFO UnsafeExternalSorter: Thread 71 spilling sort data of 3.2 GB to disk (4 times so far)
+26/10/30 01:31:47 INFO UnsafeExternalSorter: Thread 71 spilling sort data of 3.2 GB to disk (9 times so far)
+26/10/30 01:56:58 WARN YarnAllocator: Container killed by YARN for exceeding memory limits. 12.8 GB of 12 GB physical memory used. Consider boosting spark.yarn.executor.memoryOverhead.

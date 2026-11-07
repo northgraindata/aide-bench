@@ -1,0 +1,1 @@
+- {sha: 8c1de47, author: ola, date: 2024-11-19, message: "loyalty: read customers as ISO-8859-2 (CRM export)", files: [loyalty.R], diff: ""}

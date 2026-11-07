@@ -1,0 +1,18 @@
+systems:
+  - kind: orchestrator
+    flavor: cron
+    jobs:
+      - job_id: crm_export
+        schedule: "10 2 * * *"
+        command: /opt/etl/crm_export.sh
+        user: etl
+        runs:
+          - {run_id: "2026-10-30", started: "2026-10-30T02:10:00", exit_code: 0, output: "/opt/etl/crm_export.sh: line 7: psql: command not found\nexported /srv/export/crm_20261030.csv.gz"}
+          - {run_id: "2026-10-28", started: "2026-10-28T02:10:00", exit_code: 0, output: "exported /srv/export/crm_20261028.csv.gz"}
+    environment:
+      etl: {HOME: /home/etl, LOGNAME: etl, PATH: "/usr/bin:/bin", SHELL: /bin/sh}
+    syslog_file: logs/syslog.log
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml

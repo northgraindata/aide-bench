@@ -1,0 +1,5 @@
+26/10/30 03:00:40 INFO ApplicationMaster: Registered signal handlers for [TERM, HUP, INT]
+26/10/30 03:01:12 ERROR ApplicationMaster: User class threw exception: java.io.IOException: No space left on device
+	at java.io.FileOutputStream.writeBytes(Native Method)
+	at org.apache.spark.storage.DiskBlockObjectWriter.write(DiskBlockObjectWriter.scala:249)
+26/10/30 03:01:12 INFO ApplicationMaster: Final app status: FAILED, exitCode: 15

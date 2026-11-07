@@ -9,6 +9,8 @@ CATEGORIES: dict[str, str] = {
     "code-bug": "A defect in pipeline or transformation code.",
     "infrastructure": "Compute, network, storage or scheduler failure.",
     "permissions": "A credential or access policy blocks required access.",
+    "performance-cost": "Queries or jobs became slower or more expensive without producing wrong results.",
+    "late-data": "Data arrives after the job that reads it has already run, so results are incomplete or shift between runs.",
     "no-issue": "The alert is a false alarm; the pipeline is healthy.",
     "unknown": "The available evidence does not establish a cause.",
 }

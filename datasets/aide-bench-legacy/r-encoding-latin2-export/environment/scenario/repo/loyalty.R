@@ -1,0 +1,10 @@
+day <- format(Sys.Date(), "%Y%m%d")
+customers <- read.csv(sprintf("/data/in/customers_%s.csv", day), fileEncoding = "ISO-8859-2")
+cat(sprintf("Read %d customers from /data/in/customers_%s.csv\n", nrow(customers), day))
+loyalty <- read.csv(sprintf("/data/in/loyalty_%s.csv", day), fileEncoding = "UTF-8")
+cat(sprintf("Read %d loyalty accounts\n", nrow(loyalty)))
+
+merged <- merge(customers, loyalty, by = "name")
+cat(sprintf("Merged %d of %d customers by name\n", nrow(merged), nrow(customers)))
+write.csv(merged, sprintf("/data/out/loyalty_%s.csv", day), row.names = FALSE)
+cat(sprintf("Wrote /data/out/loyalty_%s.csv\n", day))

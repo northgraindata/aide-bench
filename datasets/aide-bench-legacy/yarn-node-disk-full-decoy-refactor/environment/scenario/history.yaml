@@ -1,0 +1,1 @@
+- {sha: a19e6d2, author: ula, date: 2026-10-28, message: "clickstream: refactor schema handling into a helper", files: [src/main/scala/com/acme/Clickstream.scala], diff: ""}

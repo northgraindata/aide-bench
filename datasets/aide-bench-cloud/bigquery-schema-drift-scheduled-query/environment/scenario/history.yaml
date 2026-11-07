@@ -1,0 +1,1 @@
+- {sha: 8f6a2d3, author: sam, date: 2026-05-04, message: "ltv: weekly to daily refresh", files: [sql/refresh_customer_ltv.sql], diff: ""}

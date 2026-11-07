@@ -1,0 +1,2 @@
++ spark-submit --class com.acme.SalesDaily /opt/jars/sales-2.1.0.jar s3a://lake/pos/dt=2026-10-30 s3a://lake/marts/daily_sales
+26/10/30 02:37:00 INFO Client: Application report for application_1761800000000_0420 (state: FINISHED, final status: SUCCEEDED)

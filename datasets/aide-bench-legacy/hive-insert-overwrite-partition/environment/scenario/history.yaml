@@ -1,0 +1,7 @@
+- sha: d4410ab
+  author: ewa
+  date: 2026-10-29
+  message: "hive: archive staging at 05:30 so the staging table stays small"
+  files: [hql/archive_staging.hql]
+  diff: ""
+- {sha: 6620cf1, author: ewa, date: 2026-03-12, message: "hive: load yesterday and today with dynamic partitions", files: [hql/load_sales.hql], diff: ""}

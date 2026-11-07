@@ -1,0 +1,24 @@
+systems:
+  - kind: warehouse
+    flavor: bigquery
+    sql:
+      - |
+        create table orders_stream as
+        select i as order_id,
+               timestamp '2026-10-30 00:00:00' + to_seconds(i * 8) as event_ts,
+               timestamp '2026-10-30 00:00:10' + to_seconds(i * 8) as ingested_ts,
+               25.0 as amount
+        from range(1, 9641) t(i)
+        union all
+        select i as order_id,
+               timestamp '2026-10-30 23:35:00' + to_seconds((i - 9641) * 4) as event_ts,
+               timestamp '2026-10-30 23:35:00' + to_seconds((i - 9641) * 4) + interval 40 minute as ingested_ts,
+               25.0 as amount
+        from range(9641, 9982) t(i)
+      - "create table daily_revenue_report as select date '2026-10-30' as report_date, 9640 as orders, 241000.0 as revenue"
+    query_history:
+      - {job_id: "bquxjob_7c1", user_email: scheduled-queries@acme.iam, start_time: "2026-10-31T00:05:01Z", end_time: "2026-10-31T00:05:09Z", status: DONE, statement_type: INSERT, rows_affected: 9640, total_bytes_processed: 812000000, query: "insert into reporting.daily_revenue_report select date(event_ts), count(*), sum(amount) from raw.orders_stream where date(event_ts) = '2026-10-30' group by 1"}
+      - {job_id: "bquxjob_7c0", user_email: scheduled-queries@acme.iam, start_time: "2026-10-30T00:05:01Z", end_time: "2026-10-30T00:05:08Z", status: DONE, statement_type: INSERT, rows_affected: 9702, total_bytes_processed: 809000000, query: "insert into reporting.daily_revenue_report select date(event_ts), count(*), sum(amount) from raw.orders_stream where date(event_ts) = '2026-10-29' group by 1"}
+  - kind: docs
+    flavor: markdown
+    dir: docs

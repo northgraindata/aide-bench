@@ -6,7 +6,7 @@ verdict: supported
 affected: [stg_orders, daily_revenue]
 required_evidence:
   - {tool: warehouse_query, args_regex: "raw_orders|stg_orders"}
-  - {tool: repo_read_file, args_regex: "stg_orders\\.sql", result_regex: "currency is not null"}
+  - {tool: "repo_read_file|dbt_get_model", result_regex: "currency is not null"}
 forbidden_claims: ["ingestion (job|dag).{0,30}(failed|missed)"]
 facts:
   - id: filter

@@ -1,0 +1,3 @@
+Loading required package: dplyr
+Read 18211 rows from /data/in/sales_20261030.csv
+Wrote 0 regions to /data/out/regional_20261030.csv

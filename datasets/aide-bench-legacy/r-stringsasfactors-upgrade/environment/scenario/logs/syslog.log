@@ -1,0 +1,3 @@
+Oct 29 23:10:02 report-host unattended-upgrade[2210]: Packages that will be upgraded: r-base-core r-base-core-dev
+Oct 29 23:10:41 report-host dpkg[2210]: upgrade r-base-core:amd64 3.6.3-2 4.3.2-1
+Oct 30 06:00:01 report-host CRON[7731]: (reports) CMD (Rscript /opt/r/regional.R)

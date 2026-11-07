@@ -1,0 +1,4 @@
+Read 1990 customers from /data/in/customers_20261028.csv
+Read 1990 loyalty accounts
+Merged 1990 of 1990 customers by name
+Wrote /data/out/loyalty_20261028.csv

@@ -1,0 +1,53 @@
+systems:
+  - kind: warehouse
+    flavor: duckdb
+    sql:
+      - |
+        create table events_raw as
+        select i as event_id,
+               timestamp '2026-10-29 00:00:00'
+                 + (case when i <= 2800 then 0 when i <= 5200 then 1 else 2 end) * interval 1 day
+                 + to_seconds(cast(86400 * pow(((i * 7919) % 10000) / 10000.0, 2) as bigint)) as event_ts
+        from range(1, 7201) t(i)
+      - |
+        create table events_per_day as
+        select cast(event_ts - interval 4 hour as date) as event_date, count(*) as events
+        from events_raw group by 1
+  - kind: orchestrator
+    flavor: cron
+    jobs:
+      - job_id: events_per_day
+        schedule: "40 1 * * *"
+        command: /opt/jobs/run_events_per_day.sh
+        user: etl
+        runs:
+          - {run_id: "2026-10-30", started: "2026-10-30T01:40:00", exit_code: 0, output: "application_1761800000000_0433 SUCCEEDED"}
+          - {run_id: "2026-10-26", started: "2026-10-26T01:40:00", exit_code: 0, output: "application_1761800000000_0301 SUCCEEDED"}
+  - kind: compute
+    flavor: spark
+    applications:
+      - app_id: application_1761800000000_0433
+        name: events-per-day
+        user: etl
+        state: SUCCEEDED
+        start: "2026-10-30T01:40:03"
+        duration_s: 233
+        spark_version: "2.4.8"
+        conf: {spark.executor.memory: 8g}
+        driver_log_file: logs/driver_new.log
+      - app_id: application_1761800000000_0301
+        name: events-per-day
+        user: etl
+        state: SUCCEEDED
+        start: "2026-10-26T01:40:03"
+        duration_s: 228
+        spark_version: "2.4.8"
+        conf: {spark.executor.memory: 8g}
+        driver_log_file: logs/driver_old.log
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml
+  - kind: docs
+    flavor: markdown
+    dir: docs

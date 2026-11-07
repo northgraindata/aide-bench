@@ -1,0 +1,21 @@
+- sha: c41f09a
+  author: dana
+  date: 2026-10-28
+  message: "normalize: keep anonymous traffic, default customer_id to ANON and drop the not-null filter"
+  files: [src/main/scala/com/acme/NormalizeEvents.scala]
+  diff: |
+    --- a/src/main/scala/com/acme/NormalizeEvents.scala
+    +++ b/src/main/scala/com/acme/NormalizeEvents.scala
+    @@ -7,5 +7,5 @@
+       def load(spark: SparkSession, path: String): DataFrame =
+         spark.read.parquet(path)
+    -      .filter(col("customer_id").isNotNull)
+    +      .withColumn("customer_id", coalesce(col("customer_id"), lit("ANON")))
+           .withColumn("event_date", to_date(col("event_ts")))
+- sha: 5d2e7b1
+  author: marco
+  date: 2026-10-14
+  message: "ops: raise executor memory from 8g to 12g"
+  files: [conf/spark-defaults.conf]
+  diff: ""
+- {sha: 90ab4c2, author: dana, date: 2026-09-30, message: "sessions: bump to Spark 2.4.8", files: [build.sbt], diff: ""}

@@ -1,0 +1,3 @@
+name: analytics
+profile: snowflake
+# grants are applied by the marts config

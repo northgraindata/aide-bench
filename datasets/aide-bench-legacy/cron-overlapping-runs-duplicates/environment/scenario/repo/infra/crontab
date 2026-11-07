@@ -1,0 +1,1 @@
+*/15 * * * * /opt/etl/inventory_snapshot.sh

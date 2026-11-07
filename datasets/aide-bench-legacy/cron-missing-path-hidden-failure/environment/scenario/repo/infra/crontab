@@ -1,0 +1,2 @@
+MAILTO=""
+10 2 * * * /opt/etl/crm_export.sh

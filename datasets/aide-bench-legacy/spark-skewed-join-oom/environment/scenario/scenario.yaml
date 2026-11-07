@@ -1,0 +1,52 @@
+systems:
+  - kind: orchestrator
+    flavor: cron
+    jobs:
+      - job_id: nightly_sessions
+        schedule: "15 1 * * *"
+        command: /opt/jobs/run_sessions.sh
+        user: etl
+        runs:
+          - {run_id: "2026-10-30", started: "2026-10-30T01:15:00", exit_code: 1, output_file: logs/cron_run_1030.log}
+          - {run_id: "2026-10-29", started: "2026-10-29T01:15:00", exit_code: 1, output_file: logs/cron_run_1029.log}
+          - {run_id: "2026-10-28", started: "2026-10-28T01:15:00", exit_code: 0, output: "spark-submit finished: application_1761800000000_0377 SUCCEEDED in 14m 02s"}
+  - kind: compute
+    flavor: spark
+    applications:
+      - app_id: application_1761800000000_0412
+        name: nightly-session-join
+        user: etl
+        state: FAILED
+        start: "2026-10-30T01:15:04"
+        duration_s: 2503
+        spark_version: "2.4.8"
+        conf:
+          spark.executor.memory: 12g
+          spark.executor.instances: "20"
+          spark.sql.shuffle.partitions: "200"
+          spark.sql.adaptive.enabled: "false"
+        failure_reason: "Job aborted due to stage failure: Task 87 in stage 5.0 failed 4 times, most recent failure: Lost task 87.3 in stage 5.0 (TID 9120, worker-14, executor 12): ExecutorLostFailure (executor 12 exited caused by one of the running tasks) Reason: Container killed by YARN for exceeding memory limits. 12.8 GB of 12 GB physical memory used."
+        stages:
+          - {stage_id: 0, name: "parquet scan events", status: COMPLETE, num_tasks: 640, failed_tasks: 0, duration_s: 95}
+          - {stage_id: 1, name: "parquet scan customers", status: COMPLETE, num_tasks: 40, failed_tasks: 0, duration_s: 12}
+          - stage_id: 5
+            name: "SortMergeJoin [customer_id]"
+            status: FAILED
+            num_tasks: 200
+            failed_tasks: 4
+            duration_s: 2410
+            task_duration_s: {min: 4, median: 19, p75: 31, max: 2290}
+            shuffle_read_mb: {min: 38, median: 210, p75: 260, max: 41800}
+            spill_mb: {median: 0, max: 38200}
+          - {stage_id: 6, name: "groupBy segment,event_date", status: SKIPPED, num_tasks: 200, failed_tasks: 0, duration_s: 0}
+        driver_log_file: logs/spark_driver.log
+        executors:
+          - {id: 12, host: worker-14, status: dead, log_file: logs/spark_executor_12.log}
+          - {id: 3, host: worker-02, status: active, log_file: logs/spark_executor_3.log}
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml
+  - kind: object_storage
+    flavor: s3-minio
+    buckets: {lake: lake}

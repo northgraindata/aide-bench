@@ -1,0 +1,16 @@
+systems:
+  - kind: orchestrator
+    flavor: cron
+    jobs:
+      - job_id: regional_report
+        schedule: "0 6 * * *"
+        command: Rscript /opt/r/regional.R
+        user: reports
+        runs:
+          - {run_id: "2026-10-30", started: "2026-10-30T06:00:00", exit_code: 0, output_file: logs/run_1030.log}
+          - {run_id: "2026-10-29", started: "2026-10-29T06:00:00", exit_code: 0, output_file: logs/run_1029.log}
+    syslog_file: logs/syslog.log
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml

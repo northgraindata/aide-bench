@@ -1,0 +1,6 @@
+name: analytics
+profile: snowflake
+models:
+  analytics:
+    marts:
+      +schedule_hint: hourly
