@@ -1,0 +1,7 @@
+- sha: 6e3d1f4
+  author: lena
+  date: 2026-10-27
+  message: "score_customers: cache feature extraction for 7 days to save warehouse time"
+  files: [flows/score_customers.py]
+  diff: ""
+- {sha: 1c47d90, author: omar, date: 2026-08-30, message: "score_customers: pass the run date", files: [flows/score_customers.py], diff: ""}

@@ -1,0 +1,4 @@
+26/10/30 02:30:12 INFO ParquetFileFormat: Reading 120 files under s3a://lake/pos/dt=2026-10-30
+26/10/30 02:30:13 WARN ParquetFileFormat: mergeSchema is false: the schema of the first file is used for all files
+26/10/30 02:30:40 INFO SalesDaily: rows read 4120331
+26/10/30 02:31:21 INFO SalesDaily: wrote 10 stores for 2026-10-30

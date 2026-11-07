@@ -1,0 +1,24 @@
+systems:
+  - kind: compute
+    flavor: yarn
+    nodes:
+      - {host: worker-01, state: RUNNING, health_report: "", disk_used_pct: 58}
+      - {host: worker-02, state: RUNNING, health_report: "", disk_used_pct: 61}
+      - {host: worker-07, state: UNHEALTHY, health_report: "1/1 local-dirs usable space is below configured utilization percentage/no more usable space [ /data/yarn/local : used space above threshold of 90.0% ] ; 1/1 log-dirs are bad: /data/yarn/logs", disk_used_pct: 100}
+      - {host: worker-08, state: RUNNING, health_report: "", disk_used_pct: 63}
+    applications:
+      - app_id: application_1761800000000_0511
+        name: etl_clickstream
+        user: etl
+        queue: default
+        state: FAILED
+        final_status: FAILED
+        start: "2026-10-30T03:00:11"
+        diagnostics: "Application application_1761800000000_0511 failed 3 times due to AM Container for appattempt_1761800000000_0511_000003 exited with exitCode: 1"
+        containers:
+          - {container_id: container_1761800000000_0511_01_000001, node: worker-07, exit_code: 1, state: COMPLETE, log_file: logs/am_container.log}
+          - {container_id: container_1761800000000_0511_01_000004, node: worker-02, exit_code: 0, state: COMPLETE, log: "INFO Executor: Finished task 7.0 in stage 2.0 (TID 41)"}
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml

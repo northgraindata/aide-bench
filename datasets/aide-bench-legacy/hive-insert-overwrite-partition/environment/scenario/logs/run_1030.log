@@ -1,0 +1,8 @@
+Query ID = etl_20261030060001_5c1e
+Total jobs = 3
+Loading data to table default.sales_daily partition (dt=2026-10-29)
+Loading data to table default.sales_daily partition (dt=2026-10-30)
+Partition default.sales_daily{dt=2026-10-29} stats: [numFiles=1, numRows=2100, totalSize=41230, rawDataSize=39130]
+Partition default.sales_daily{dt=2026-10-30} stats: [numFiles=1, numRows=4000, totalSize=79100, rawDataSize=75100]
+OK
+Time taken: 214.7 seconds

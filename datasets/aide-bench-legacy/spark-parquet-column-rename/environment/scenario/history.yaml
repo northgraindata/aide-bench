@@ -1,0 +1,1 @@
+- {sha: 31d8e0a, author: tomek, date: 2026-08-02, message: "sales: treat missing amount as 0 so refunds do not null the sum", files: [src/main/scala/com/acme/SalesDaily.scala], diff: ""}

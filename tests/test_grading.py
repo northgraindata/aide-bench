@@ -35,7 +35,7 @@ def test_citing_a_trace_id_that_does_not_exist_fails(diagnose_task):
     assert reward["grounded"] == 0.0 and reward["reward"] == 0.0
 
 
-def test_citing_only_unrelated_calls_fails_evidence_recall(diagnose_task):
+def test_citing_only_unrelated_calls_lowers_evidence_recall_but_not_reward(diagnose_task):
     if not _truth(diagnose_task).required_evidence:
         return
     listing = "docs_list" if "docs/markdown" in diagnose_task.flavors else "repo_list_files"
@@ -44,7 +44,8 @@ def test_citing_only_unrelated_calls_fails_evidence_recall(diagnose_task):
     solution["answer"]["evidence"] = ["unrelated"]
     reward = trial(diagnose_task, solution)
     assert reward["evidence_recall"] < 1.0
-    assert reward["reward"] == 0.0
+    # Evidence recall is reported, not gating: other agents reach the same fact through other tools.
+    assert reward["reward"] == 1.0
 
 
 def _truth(task):

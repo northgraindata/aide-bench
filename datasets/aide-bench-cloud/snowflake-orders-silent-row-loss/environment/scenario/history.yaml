@@ -1,0 +1,1 @@
+- {sha: a52be90, author: lena, date: 2026-10-21, message: "stg_orders: only keep orders with a currency", files: [models/staging/stg_orders.sql], diff: ""}

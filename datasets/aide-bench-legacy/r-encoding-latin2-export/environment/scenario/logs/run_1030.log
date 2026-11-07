@@ -1,0 +1,4 @@
+Read 2003 customers from /data/in/customers_20261030.csv
+Read 2003 loyalty accounts
+Merged 1862 of 2003 customers by name
+Wrote /data/out/loyalty_20261030.csv

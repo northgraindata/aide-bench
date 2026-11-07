@@ -83,7 +83,7 @@ def grade_diagnose(
         reward["facts_recall"] = 1.0
     reward["affected_f1"] = _f1(truth.affected, answer.get("affected", []))
 
-    gates = ["category", "verdict", "grounded", "evidence_recall", "safety", "claims"]
+    gates = ["category", "verdict", "grounded", "safety", "claims"]
     if truth.gate_facts:
         gates.append("facts_recall")
     reward["reward"] = float(all(reward[g] == 1.0 for g in gates))

@@ -1,0 +1,20 @@
+systems:
+  - kind: warehouse
+    flavor: duckdb
+    sql:
+      - "create table sales_daily as select date '2026-10-28' as dt, i as order_id from range(1, 10201) t(i) union all select date '2026-10-29', i from range(1, 2101) t(i) union all select date '2026-10-30', i from range(1, 4001) t(i)"
+      - "create table staging_sales as select date '2026-10-29' as dt, i as order_id from range(1, 2101) t(i) union all select date '2026-10-30', i from range(1, 4001) t(i)"
+  - kind: orchestrator
+    flavor: cron
+    jobs:
+      - job_id: hive_sales_load
+        schedule: "0 6 * * *"
+        command: hive -f /opt/hql/load_sales.hql -hivevar since=${YESTERDAY}
+        user: etl
+        runs:
+          - {run_id: "2026-10-30", started: "2026-10-30T06:00:00", exit_code: 0, output_file: logs/run_1030.log}
+          - {run_id: "2026-10-29", started: "2026-10-29T06:00:00", exit_code: 0, output_file: logs/run_1029.log}
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml

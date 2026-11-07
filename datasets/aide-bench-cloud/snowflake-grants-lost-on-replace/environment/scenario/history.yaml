@@ -1,0 +1,14 @@
+- sha: 7d90e11
+  author: nina
+  date: 2026-10-29
+  message: "dbt: remove per-model post-hooks, grants are managed centrally"
+  files: [models/marts/fct_revenue.sql, dbt_project.yml]
+  diff: |
+    --- a/models/marts/fct_revenue.sql
+    +++ b/models/marts/fct_revenue.sql
+    @@ -1,3 +1,3 @@
+    -{{ config(materialized='table', post_hook="grant select on {{ this }} to role reporter") }}
+    +{{ config(materialized='table') }}
+
+     select segment, sum(amount) as revenue
+- {sha: e7a1b02, author: omar, date: 2026-08-19, message: "revenue by segment mart", files: [models/marts/fct_revenue.sql], diff: ""}

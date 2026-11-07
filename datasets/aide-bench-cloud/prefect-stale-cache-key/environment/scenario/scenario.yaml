@@ -1,0 +1,29 @@
+systems:
+  - kind: warehouse
+    flavor: duckdb
+    sql:
+      - "create table customer_scores as select d as score_date, i as customer_id, (i * 37) % 100 as score from (values (date '2026-10-29'), (date '2026-10-30')) t(d), range(1, 51) u(i)"
+  - kind: orchestrator
+    flavor: prefect
+    dags:
+      - dag_id: score_customers
+        schedule: "0 3 * * *"
+        runs:
+          - run_id: scheduled-2026-10-30
+            state: Completed
+            parameters: {date: "2026-10-30"}
+            tasks:
+              - {task_id: extract_features, state: Cached, log_file: logs/extract_cached.log}
+              - {task_id: score, state: Completed, log: "Finished in state Completed(): scored 50000 customers"}
+              - {task_id: load_scores, state: Completed, log: "Finished in state Completed(): loaded 50000 rows for 2026-10-30"}
+          - run_id: scheduled-2026-10-29
+            state: Completed
+            parameters: {date: "2026-10-29"}
+            tasks:
+              - {task_id: extract_features, state: Completed, log: "Finished in state Completed(): extracted 50000 feature rows for 2026-10-29 in 412 s"}
+              - {task_id: score, state: Completed, log: "Finished in state Completed(): scored 50000 customers"}
+              - {task_id: load_scores, state: Completed, log: "Finished in state Completed(): loaded 50000 rows for 2026-10-29"}
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml

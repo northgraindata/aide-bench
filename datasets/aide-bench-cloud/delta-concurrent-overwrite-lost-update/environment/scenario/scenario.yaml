@@ -1,0 +1,40 @@
+systems:
+  - kind: warehouse
+    flavor: databricks-sql
+    sql:
+      - "create table customers_gold as select i as customer_id, 'old_' || i || '@example.com' as email, 'standard' as segment from range(1, 21) t(i)"
+    query_history:
+      - {query_id: "q-8812", user_name: svc-segments, status: FINISHED, elapsed_s: 612, statement: "INSERT OVERWRITE customers_gold SELECT customer_id, email, compute_segment(customer_id) AS segment FROM customers_gold_snapshot_v40"}
+  - kind: lakehouse
+    flavor: delta
+    tables:
+      customers_gold:
+        detail: {location: "s3://lake/gold/customers_gold", partitionColumns: [], numFiles: 118, sizeInBytes: 9421003211, properties: {"delta.isolationLevel": WriteSerializable}}
+        history:
+          - {version: 43, timestamp: "2026-10-30T02:40:12Z", userName: svc-merge, operation: OPTIMIZE, operationMetrics: {numRemovedFiles: 140, numAddedFiles: 118}}
+          - {version: 42, timestamp: "2026-10-30T02:10:40Z", userName: svc-segments, operation: WRITE, operationParameters: {mode: Overwrite, partitionBy: "[]"}, readVersion: 40, isolationLevel: WriteSerializable, operationMetrics: {numRemovedFiles: 131, numAddedFiles: 140, numOutputRows: "2104331"}, job: {jobName: rebuild_segments, runId: "88123"}}
+          - {version: 41, timestamp: "2026-10-30T02:10:11Z", userName: svc-merge, operation: MERGE, operationParameters: {predicate: "customers_gold.customer_id = u.customer_id"}, readVersion: 40, isolationLevel: WriteSerializable, operationMetrics: {numTargetRowsUpdated: "12410", numTargetRowsInserted: "0", numOutputRows: "12410"}, job: {jobName: merge_customer_updates, runId: "88101"}}
+          - {version: 40, timestamp: "2026-10-30T01:12:03Z", userName: svc-merge, operation: OPTIMIZE, operationMetrics: {numRemovedFiles: 12, numAddedFiles: 2}}
+        commits:
+          "42": "remove: 131 files (including the 12 files added by version 41)\nadd: 140 files built from the snapshot read at version 40"
+  - kind: orchestrator
+    flavor: airflow
+    dags:
+      - dag_id: merge_customer_updates
+        schedule: "0 2 * * *"
+        runs:
+          - run_id: scheduled__2026-10-30
+            state: success
+            tasks:
+              - {task_id: merge, state: success, log: "02:00:05 start\n02:10:11 MERGE committed version 41: updated 12410 rows\n02:10:12 done"}
+      - dag_id: rebuild_segments
+        schedule: "0 2 * * *"
+        runs:
+          - run_id: scheduled__2026-10-30
+            state: success
+            tasks:
+              - {task_id: rebuild, state: success, log: "02:00:09 start\n02:00:11 read customers_gold at version 40 (2104331 rows)\n02:08:30 computed segments\n02:10:40 wrote customers_gold mode overwrite, committed version 42\n02:10:41 done"}
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml

@@ -1,0 +1,18 @@
+systems:
+  - kind: warehouse
+    flavor: bigquery
+    sql:
+      - "create table customers as select i as customer_id, 'c' || i as email, 'EU' as region from range(1, 11) t(i)"
+      - "create table orders as select i as order_id, (i % 10) + 1 as customer_id, 40.0 as amount from range(1, 101) t(i)"
+    query_history:
+      - {job_id: "bquxjob_9a3", user_email: scheduled-queries@acme.iam, start_time: "2026-10-30T04:00:03Z", status: DONE, statement_type: SELECT, error: "Unrecognized name: cust_id at [4:12]", error_reason: invalidQuery, query: "create or replace table reporting.customer_ltv as select c.cust_id, c.region, sum(o.amount) as ltv from crm.customers c join sales.orders o on o.customer_id = c.cust_id group by 1, 2"}
+      - {job_id: "bquxjob_9a2", user_email: scheduled-queries@acme.iam, start_time: "2026-10-29T04:00:02Z", status: DONE, statement_type: SELECT, error: "Unrecognized name: cust_id at [4:12]", error_reason: invalidQuery, query: "create or replace table reporting.customer_ltv as select c.cust_id, c.region, sum(o.amount) as ltv from crm.customers c join sales.orders o on o.customer_id = c.cust_id group by 1, 2"}
+      - {job_id: "bquxjob_9a1", user_email: scheduled-queries@acme.iam, start_time: "2026-10-28T04:00:02Z", status: DONE, statement_type: CREATE_TABLE_AS_SELECT, rows_affected: 48120, total_bytes_processed: 220000000, query: "create or replace table reporting.customer_ltv as select ..."}
+      - {job_id: "bquxjob_6f0", user_email: analyst@acme.com, start_time: "2026-10-22T15:31:10Z", status: DONE, statement_type: SELECT, error: "Quota exceeded: Your project exceeded quota for free query bytes scanned.", error_reason: quotaExceeded, query: "select * from raw.clickstream_2026"}
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml
+  - kind: docs
+    flavor: markdown
+    dir: docs

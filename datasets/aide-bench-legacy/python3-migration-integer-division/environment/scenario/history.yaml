@@ -1,0 +1,7 @@
+- sha: 5f0e3b8
+  author: wojtek
+  date: 2026-10-29
+  message: "etl host: move jobs from python 2.7 to python 3.11, cron uses python3"
+  files: [infra/crontab]
+  diff: ""
+- {sha: 0b7d2e1, author: wojtek, date: 2019-04-02, message: "age_bands: 5 year bands", files: [age_bands.py], diff: ""}

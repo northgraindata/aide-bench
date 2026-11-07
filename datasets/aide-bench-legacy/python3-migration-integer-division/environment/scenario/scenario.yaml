@@ -1,0 +1,20 @@
+systems:
+  - kind: warehouse
+    flavor: duckdb
+    sql:
+      - "create table customers as select i as customer_id, 18 + (i % 63) as age from range(1, 9121) t(i)"
+      - "create table age_bands as select cast(age / 5 as bigint) * 5 as band_start, count(*) as customers from customers where age % 5 = 0 group by 1"
+  - kind: orchestrator
+    flavor: cron
+    jobs:
+      - job_id: age_bands
+        schedule: "0 4 * * *"
+        command: python3 /opt/etl/age_bands.py
+        user: etl
+        runs:
+          - {run_id: "2026-10-30", started: "2026-10-30T04:00:00", exit_code: 0, output: "loaded 9120 customers\nassigned 1882 customers to bands"}
+          - {run_id: "2026-10-28", started: "2026-10-28T04:00:00", exit_code: 0, output: "loaded 9071 customers\nassigned 9071 customers to bands"}
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml

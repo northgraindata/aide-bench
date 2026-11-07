@@ -2,7 +2,7 @@
 
 Tasks, flavors and graders are welcome.
 
-1. Read `docs/ADDING_TASKS.md` or `docs/ADDING_FLAVORS.md`.
+1. Look at an existing task under `datasets/` or a flavor under `src/aide_systems/flavors/`.
 2. Run `uv run aide check` and `uv run pytest`.
 3. Run `uv run aide validate` for any task you add or change.
 4. Describe what behavior the task tests and what a plausible wrong answer looks like.

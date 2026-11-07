@@ -1,0 +1,2 @@
+- {sha: 52bc1aa, author: dev, date: 2026-10-20, message: "rebuild_segments: move to 02:00 to finish before the dashboards", files: [dags/schedules.py], diff: ""}
+- {sha: 0ee3f65, author: dev, date: 2026-09-02, message: "rebuild_segments: write segments into customers_gold", files: [jobs/rebuild_segments.py], diff: ""}

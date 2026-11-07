@@ -1,0 +1,18 @@
+- sha: 4be77c0
+  author: nina
+  date: 2026-10-28
+  message: "marts: build fct_events as a table so that deleted events disappear"
+  files: [models/marts/fct_events.sql]
+  diff: |
+    --- a/models/marts/fct_events.sql
+    +++ b/models/marts/fct_events.sql
+    @@ -1,4 +1,2 @@
+    -{{ config(materialized='incremental', unique_key='event_id') }}
+    +{{ config(materialized='table') }}
+
+     select e.event_id, e.user_id, e.event_ts, u.segment
+    @@ -7,3 +5,0 @@
+    -{% if is_incremental() %}
+    -where e.loaded_at > (select max(loaded_at) from {{ this }})
+    -{% endif %}
+- {sha: 9c2f8aa, author: nina, date: 2026-09-14, message: "marts: add segment to fct_events", files: [models/marts/fct_events.sql], diff: ""}

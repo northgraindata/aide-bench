@@ -1,0 +1,3 @@
+Oct 30 02:10:01 etl-host CRON[18211]: (etl) CMD (/opt/etl/crm_export.sh)
+Oct 30 02:10:02 etl-host CRON[18210]: (CRON) info (No MTA installed, discarding output)
+Oct 28 02:10:01 etl-host CRON[9004]: (etl) CMD (/opt/etl/crm_export.sh)

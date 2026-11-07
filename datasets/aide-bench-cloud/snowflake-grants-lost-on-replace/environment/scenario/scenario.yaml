@@ -1,0 +1,16 @@
+systems:
+  - kind: warehouse
+    flavor: snowflake
+    sql:
+      - "create table fct_revenue as select 'enterprise' as segment, 120000.0 as revenue"
+    query_history:
+      - {query_id: "01b9-0207", user_name: BI_READER, role_name: REPORTER, warehouse: BI_WH, start_time: "2026-10-30T09:02:11", elapsed_s: 0, gb_scanned: 0, credits: 0, status: FAILED, error: "SQL access control error: Insufficient privileges to operate on table 'FCT_REVENUE'", query_text: "select segment, sum(revenue) from analytics.fct_revenue group by 1"}
+      - {query_id: "01b9-0188", user_name: BI_READER, role_name: REPORTER, warehouse: BI_WH, start_time: "2026-10-29T09:01:40", elapsed_s: 0, gb_scanned: 0, credits: 0, status: FAILED, error: "SQL access control error: Insufficient privileges to operate on table 'FCT_REVENUE'", query_text: "select segment, sum(revenue) from analytics.fct_revenue group by 1"}
+      - {query_id: "01b9-0150", user_name: SVC_DBT, role_name: TRANSFORMER, warehouse: ANALYTICS_WH, start_time: "2026-10-29T06:00:21", elapsed_s: 14, gb_scanned: 12.1, credits: 0.03, status: SUCCESS, query_text: "create or replace table analytics.fct_revenue as select segment, sum(amount) as revenue from analytics.orders group by 1"}
+      - {query_id: "01b9-0149", user_name: SVC_DBT, role_name: TRANSFORMER, warehouse: ANALYTICS_WH, start_time: "2026-10-28T06:00:19", elapsed_s: 15, gb_scanned: 12.0, credits: 0.03, status: SUCCESS, query_text: "create or replace table analytics.fct_revenue as select segment, sum(amount) as revenue from analytics.orders group by 1"}
+      - {query_id: "01b9-0151", user_name: SVC_DBT, role_name: TRANSFORMER, warehouse: ANALYTICS_WH, start_time: "2026-10-28T06:00:36", elapsed_s: 0, gb_scanned: 0, credits: 0, status: SUCCESS, query_text: "grant select on table analytics.fct_revenue to role reporter"}
+      - {query_id: "01b9-0033", user_name: BI_READER, role_name: REPORTER, warehouse: BI_WH, start_time: "2026-10-27T17:44:50", elapsed_s: 0, gb_scanned: 0, credits: 0, status: FAILED, error: "SQL compilation error: Object 'ANALYTICS.FCT_REVENUE_OLD' does not exist or not authorized.", query_text: "select * from analytics.fct_revenue_old"}
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml

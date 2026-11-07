@@ -1,0 +1,25 @@
+systems:
+  - kind: warehouse
+    flavor: duckdb
+    sql:
+      - |
+        create table inventory_snapshots as
+        select ts, sku, 10 as qty
+        from (values (timestamp '2026-10-30 09:00:00'), (timestamp '2026-10-30 09:00:00'), (timestamp '2026-10-30 10:00:00'), (timestamp '2026-10-30 10:00:00'), (timestamp '2026-10-30 10:00:00'), (timestamp '2026-10-30 11:00:00')) w(ts),
+             range(1, 501) s(sku)
+  - kind: orchestrator
+    flavor: cron
+    jobs:
+      - job_id: inventory_snapshot
+        schedule: "*/15 * * * *"
+        command: /opt/etl/inventory_snapshot.sh
+        user: etl
+        runs:
+          - {run_id: "2026-10-30T10:30", started: "2026-10-30T10:30:01", exit_code: 0, output: "start 10:30:01\ninserted 500 rows for window 2026-10-30 10:00\nend 10:52:19"}
+          - {run_id: "2026-10-30T10:15", started: "2026-10-30T10:15:01", exit_code: 0, output: "start 10:15:01\ninserted 500 rows for window 2026-10-30 10:00\nend 10:49:07"}
+          - {run_id: "2026-10-30T10:00", started: "2026-10-30T10:00:01", exit_code: 0, output: "start 10:00:01\ninserted 500 rows for window 2026-10-30 10:00\nend 10:38:44"}
+          - {run_id: "2026-10-28T10:00", started: "2026-10-28T10:00:01", exit_code: 0, output: "start 10:00:01\ninserted 500 rows for window 2026-10-28 10:00\nend 10:00:41"}
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml

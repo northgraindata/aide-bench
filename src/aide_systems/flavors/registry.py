@@ -20,6 +20,7 @@ def _load() -> None:
         return
     _LOADED = True
     from . import docs, dbt, fixture, iceberg, airflow, dagster, duckdb, repo, s3  # noqa: F401
+    from . import compute, legacy_orchestrators, transpiled  # noqa: F401
 
     for entry in entry_points(group="aide_bench.flavors"):
         entry.load()

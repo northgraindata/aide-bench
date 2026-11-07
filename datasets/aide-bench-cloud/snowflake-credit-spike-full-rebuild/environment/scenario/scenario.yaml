@@ -1,0 +1,15 @@
+systems:
+  - kind: warehouse
+    flavor: snowflake
+    sql:
+      - "create table warehouse_metering as select * from (values (date '2026-10-26', 0.5), (date '2026-10-27', 0.5), (date '2026-10-28', 21.4), (date '2026-10-29', 22.1), (date '2026-10-30', 21.9)) t(usage_date, credits_used)"
+    query_history:
+      - {query_id: "01b8-0030", user_name: SVC_DBT, role_name: TRANSFORMER, warehouse: ANALYTICS_WH, start_time: "2026-10-30T14:00:03", elapsed_s: 412, gb_scanned: 3920.4, credits: 0.92, status: SUCCESS, query_text: "create or replace table analytics.fct_events as select e.event_id, e.user_id, e.event_ts, u.segment from raw.events e join analytics.dim_users u on e.user_id = u.user_id"}
+      - {query_id: "01b8-0029", user_name: SVC_DBT, role_name: TRANSFORMER, warehouse: ANALYTICS_WH, start_time: "2026-10-30T13:00:02", elapsed_s: 405, gb_scanned: 3918.8, credits: 0.9, status: SUCCESS, query_text: "create or replace table analytics.fct_events as select e.event_id, e.user_id, e.event_ts, u.segment from raw.events e join analytics.dim_users u on e.user_id = u.user_id"}
+      - {query_id: "01b8-0028", user_name: BI_READER, role_name: REPORTER, warehouse: ANALYTICS_WH, start_time: "2026-10-30T13:12:44", elapsed_s: 2, gb_scanned: 0.4, credits: 0.001, status: SUCCESS, query_text: "select segment, count(*) from analytics.fct_events where event_ts > dateadd(day, -7, current_timestamp()) group by 1"}
+      - {query_id: "01b8-0012", user_name: SVC_DBT, role_name: TRANSFORMER, warehouse: ANALYTICS_WH, start_time: "2026-10-27T14:00:02", elapsed_s: 9, gb_scanned: 4.3, credits: 0.02, status: SUCCESS, query_text: "merge into analytics.fct_events t using (select e.event_id, e.user_id, e.event_ts, u.segment from raw.events e join analytics.dim_users u on e.user_id = u.user_id where e.loaded_at > (select max(loaded_at) from analytics.fct_events)) s on t.event_id = s.event_id when not matched then insert (event_id, user_id, event_ts, segment) values (s.event_id, s.user_id, s.event_ts, s.segment)"}
+      - {query_id: "01b8-0011", user_name: SVC_DBT, role_name: TRANSFORMER, warehouse: ANALYTICS_WH, start_time: "2026-10-27T13:00:02", elapsed_s: 8, gb_scanned: 4.1, credits: 0.02, status: SUCCESS, query_text: "merge into analytics.fct_events t using (select ...) s on t.event_id = s.event_id when not matched then insert ..."}
+  - kind: repo
+    flavor: git
+    files: repo
+    history: history.yaml

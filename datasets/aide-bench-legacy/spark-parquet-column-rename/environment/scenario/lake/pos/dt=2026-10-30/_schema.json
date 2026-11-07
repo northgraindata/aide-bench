@@ -1,0 +1,5 @@
+{"dt": "2026-10-30", "files": [
+  {"file": "part-store-40.parquet", "columns": ["store_id", "ts", "amount", "currency"]},
+  {"file": "part-store-41.parquet", "columns": ["store_id", "ts", "net_amount", "currency"]},
+  {"file": "part-store-48.parquet", "columns": ["store_id", "ts", "net_amount", "currency"]}
+]}
